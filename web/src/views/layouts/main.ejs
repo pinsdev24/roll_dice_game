@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeekIT Dice Game</title>
+    <!-- <link href="https://cdn.tailwindcss.com" rel="stylesheet" type="text/css"> -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <nav class="bg-blue-600 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="/" class="text-2xl font-bold">GeekIT Dice Game</a>
+            <div>
+                <a href="/" class="mr-4 hover:underline">Home</a>
+                <a href="/game" class="mr-4 hover:underline">Play</a>
+                <a href="/leaderboard" class="hover:underline">Leaderboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto mt-8 p-4">
+        <%- body %>
+    </main>
+
+    <!-- <footer class="bg-blue-600 text-white p-4 mt-8">
+        <div class="container mx-auto text-center">
+            &copy; 2024 GeekIT Dice Game. All rights reserved.
+        </div>
+    </footer> -->
+
+    <script src="/js/main.js" type="text/javascript"></script>
+</body>
+</html>
