@@ -5,7 +5,7 @@ const path = require('path');
 const session = require('express-session');
 var bodyParser = require('body-parser')
 const routes = require('./routes');
-const { sequelize } = require('./models');
+const { sequelize, Configuration } = require('./models');
 const logger = require('./logger'); 
 
 const app = express();
@@ -46,19 +46,27 @@ app.get('/', (req, res) => {
   if (!req.session.user) {
     return res.redirect('/login');
   }
-  res.render('index');
+  const user = req.session.user
+  res.render('index', {user});
 });
 
 app.get('/login', (req, res) => res.render('login'));
 
-app.get('/game', (req, res) => {
+app.get('/game', async (req, res) => {
   if (!req.session.user || !req.session.sessionId) {
     return res.redirect('/');
   }
 
-  const sessionId = req.query.sessionId;
-  const playerName = req.query.name;
-  res.render('game', {sessionId, playerName})
+  const sessionId = req.session.sessionId;
+  const {username} = req.session.user;
+
+  const configuration = await Configuration.findOne({where: {SessionId: sessionId}})
+
+  if (configuration){
+    res.render('game', {sessionId, username, configuration})
+  } else {
+    res.render('game', {sessionId, username})
+  }
 });
 
 app.get('/leaderboard', (req, res) => res.render('leaderboard'));

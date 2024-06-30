@@ -21,14 +21,17 @@ exports.startSession = async (req, res) => {
 
 exports.endSession = async (req, res) => {
   try {
-    const { sessionId } = req.session.sessionId;
+    const sessionId = req.session.sessionId;
+    if (!sessionId) {
+      return res.status(404).json({ message: 'No current Session' });
+    }
     const session = await Session.findByPk(sessionId);
     if (!session) {
       return res.status(404).json({ message: 'Session not found' });
     }
     session.endTime = new Date();
     await session.save();
-    res.session.sessionId = null
+    req.session.sessionId = null
     res.json({ message: 'Session ended', sessionId: session.id });
   } catch (error) {
     res.status(400).json({ message: 'Error ending session', error: error.message });

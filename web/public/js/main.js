@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const result = document.getElementById('result');
     const modalDialog = document.getElementById('modal-dialog');
 
+    const playerScore = document.getElementById('playerScore')
+    const gamesPlayed = document.getElementById('gamesPlayed')
+
     if (rollButton) {
         rollButton.addEventListener('click', () => {
             rollButton.disabled = true;
@@ -21,7 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (index === dice.length - 1) {
                         const total = rolls.reduce((sum, num) => sum + num, 0);
-                        result.textContent = `You rolled a total of ${total}!`;
+                        result.textContent = `Vous avez obtenu un total de ${total}!`;
+                        playerScore.textContent = +playerScore.textContent + total
+                        gamesPlayed.textContent = +gamesPlayed.textContent + 1
                         saveGame({score: total})
                         rollButton.disabled = false;
                     }
@@ -44,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 const result = await response.json();
-                window.location.replace('/home');
+                window.location.replace('/');
                 console.log('Success:', result);
             } else {
                 console.error('Error:', response.status, response.statusText);
@@ -101,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 const result = await response.json();
                 console.log('Success:', result);
+                window.location.replace('/');
             } else {
                 console.error('Error:', response.status, response.statusText);
             }
@@ -118,4 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         await createUserWithName();
     });
+
+
 });

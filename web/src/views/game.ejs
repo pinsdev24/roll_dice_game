@@ -4,98 +4,183 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GeekIT Dice Game</title>
-    <link href="css/styles.css" rel="stylesheet" type="text/css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+      .dice {
+        height: 6rem;
+        width: 6rem;
+        border-radius: 0.5rem;
+        --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
+        box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+        transition-property: transform;
+        transition-duration: 300ms;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .dice:hover {
+        --tw-scale-x: 1.1;
+        --tw-scale-y: 1.1;
+        transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+      }
+
+      .hover\:bg-blue-700:hover {
+        --tw-bg-opacity: 1;
+        background-color: rgb(29 78 216 / var(--tw-bg-opacity));
+      }
+
+      .hover\:bg-gray-200:hover {
+        --tw-bg-opacity: 1;
+        background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+      }
+
+      .hover\:underline:hover {
+        text-decoration-line: underline;
+      }
+    </style>
 </head>
 <body class="bg-gray-100 font-sans">
-    <nav class="bg-blue-600 text-white p-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <a href="/" class="text-2xl font-bold">GeekIT Dice Game</a>
-            <div>
-                <a href="/" class="mr-4 hover:underline">Home</a>
-                <a href="/game" class="mr-4 hover:underline">Play</a>
-                <a href="/leaderboard" class="hover:underline">Leaderboard</a>
-            </div>
-        </div>
-    </nav>
 
-    <main class="container mx-auto mt-8 p-4">
+  <nav class="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
+    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+      <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
+          <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">GeekIT Game</span>
+      </a>
+      <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+          <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mr-3">
+            <i class="fa-solid fa-gear mr-2"></i>
+            Configuration
+          </button>
+          <button onclick="onEndSessionBtnClicked()" type="button" id="end-session-button" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+            <i class="fa-solid fa-arrow-right-from-bracket mr-2"></i>
+            Quitter la session
+          </button>
+          <button data-collapse-toggle="navbar-sticky" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-sticky" aria-expanded="false">
+            <span class="sr-only">Open main menu</span>
+            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+            </svg>
+          </button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container mx-auto mt-10 p-4">
+    <h1 class="text-3xl font-bold mt-10 mb-8 text-center">Jeu de lancé de dé</h1>
+
+    <div class="grid grid-cols-12 gaps-4 mt-10">
+      <!-- Colonne gauche: Informations du joueur courant -->
+      <div class="col-span-3 bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-2xl font-bold mb-4">Info Joueur</h2>
+        <p><strong>Nom :</strong> <span id="playerName" class="text-xl font-bold uppercase"><%= username %></span></p>
+        <p><strong>Score Total :</strong> <span id="playerScore" class="font-bold">0</span></p>
+        <p><strong>Jeux joués :</strong> <span id="gamesPlayed" class="font-bold">0</span>/<%= configuration.gameCount %></p>
+      </div>
+
+      <!-- Colonne centrale: Jeu de lancé de dé -->
+      <div class="col-span-6">
         <div class="max-w-2xl mx-auto">
-            <h1 class="text-3xl font-bold mb-8 text-center">Jeu de lancé de dé</h1>
-            <div class="grid grid-cols-12 gap-x-4">
-                <div class="bg-white rounded-lg shadow-lg p-6">
-                    <div class="flex justify-center mb-8">
-                        <% for(let i = 0; i < 2; i++) { %>
-                            <img src="/images/dice-1.png" alt="Dice" class="dice mx-2" id="dice<%= i %>">
-                        <% } %>
-                    </div>
-                    <div class="text-center">
-                        <button id="rollButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300">
-                            Roll Dice
-                        </button>
-                    </div>
-                    <div id="result" class="mt-8 text-center text-2xl font-bold"></div>
-                </div>
-                <div class="bg-white rounded-lg shadow-lg p-6">
-                    <div class="flex justify-center mb-8">
-                        <% for(let i = 0; i < 2; i++) { %>
-                            <img src="/images/dice-1.png" alt="Dice" class="dice mx-2" id="dice<%= i %>">
-                        <% } %>
-                    </div>
-                    <div class="text-center">
-                        <button id="rollButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300">
-                            Roll Dice
-                        </button>
-                    </div>
-                    <div id="result" class="mt-8 text-center text-2xl font-bold"></div>
-                </div>
+          <div class="bg-white rounded-lg shadow-lg p-8">
+            <div class="flex justify-center mb-8">
+                <% for(let i = 0; i < configuration.diceCount; i++) { %>
+                    <img src="/images/dice-1.png" alt="Dice" class="dice mx-2" id="dice<%= i %>">
+                <% } %>
             </div>
+            <div class="text-center">
+                <button id="rollButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300">
+                  Lancer les dés
+                </button>
+            </div>
+            <div id="result" class="mt-8 text-center text-2xl font-bold"></div>
+          </div>
         </div>
-    </main>
+      </div>
 
-    <section class="grid min-h-screen p-8 place-items-center">
-        <div class="container grid grid-cols-1 gap-8 my-auto lg:grid-cols-2">
-          <div class="relative flex-col bg-clip-border rounded-xl bg-transparent text-gray-700 shadow-none grid gap-2 item sm:grid-cols-2">
-            <div class="relative bg-clip-border rounded-xl overflow-hidden bg-white text-gray-700 shadow-lg m-0"><img src="https://bucket.material-tailwind.com/magic-ai/06b38f84f9669f766048c469ce861b81880378273a11ae9badaedfc32868ef44.jpg" alt="Revolutionizing Our Production Process" class="object-cover w-full h-full" /></div>
-            <div class="p-6 px-2 sm:pr-6 sm:pl-4">
-              <p class="block antialiased font-sans text-sm font-light leading-normal text-inherit mb-4 !font-semibold">Technology</p><a href="#" class="block antialiased tracking-normal font-sans text-xl font-semibold leading-snug text-blue-gray-900 mb-2 normal-case transition-colors hover:text-gray-700">Revolutionizing Our Production Process</a>
-              <p class="block antialiased font-sans text-base leading-relaxed text-inherit mb-8 font-normal !text-gray-500">Learn how our recent investment in new technology has revolutionized our production process, leading to improved efficiency and product quality.</p>
-              <div class="flex items-center gap-4"><img src="https://bucket.material-tailwind.com/magic-ai/6b1c5941d417a2a32baee89c2f3d1975d7d4fb81e486ed43dc1082ac54b0658b.jpg" class="inline-block relative object-cover object-center !rounded-full w-12 h-12 rounded-lg" />
-                <div>
-                  <p class="block antialiased font-sans text-base font-light leading-relaxed text-blue-gray-900 mb-0.5 !font-semibold">John Doe</p>
-                  <p class="block antialiased font-sans text-sm leading-normal text-gray-700 font-normal">2022-08-15</p>
+      <!-- Colonne droite: Résultats des lancers -->
+      <div class="col-span-3 bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-2xl font-bold mb-4">Résultats des lancers</h2>
+        <ul id="rollResults" class="list-disc list-inside">
+          <!-- Les résultats des lancers seront ajoutés ici -->
+        </ul>
+      </div>
+    </div>
+
+    <div id="modal-dialog" class="relative z-10 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+
+      <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+    
+      <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+
+          <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+            <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+              <div class="sm:flex sm:items-start">
+                <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                  <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                  </svg>
+                </div>
+                <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                  <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Quitter la session de jeu</h3>
+                  <div class="mt-2">
+                    <p class="text-sm text-gray-500">Êtes-vous sur de vouloir arrêter la session en cours ?</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="relative flex-col bg-clip-border rounded-xl bg-transparent text-gray-700 shadow-none grid gap-2 item sm:grid-cols-2">
-            <div class="relative bg-clip-border rounded-xl overflow-hidden bg-white text-gray-700 shadow-lg m-0"><img src="https://bucket.material-tailwind.com/magic-ai/e7aa235a7bc5f504db1c66e27ece08f8118b1da6b21c013500391afcd572cf7d.jpg" alt="Expanding Our Service Network" class="object-cover w-full h-full" /></div>
-            <div class="p-6 px-2 sm:pr-6 sm:pl-4">
-              <p class="block antialiased font-sans text-sm font-light leading-normal text-inherit mb-4 !font-semibold">Expansion</p><a href="#" class="block antialiased tracking-normal font-sans text-xl font-semibold leading-snug text-blue-gray-900 mb-2 normal-case transition-colors hover:text-gray-700">Expanding Our Service Network</a>
-              <p class="block antialiased font-sans text-base leading-relaxed text-inherit mb-8 font-normal !text-gray-500">Discover how our expansion investment has allowed us to enhance our service network, providing better support and customer experience.</p>
-              <div class="flex items-center gap-4"><img src="https://bucket.material-tailwind.com/magic-ai/16d71aaeda38d7aea4412875984357949ff12e7f2c502bb20c4c1bcf6c661607.jpg" class="inline-block relative object-cover object-center !rounded-full w-12 h-12 rounded-lg" />
-                <div>
-                  <p class="block antialiased font-sans text-base font-light leading-relaxed text-blue-gray-900 mb-0.5 !font-semibold">Jane Smith</p>
-                  <p class="block antialiased font-sans text-sm leading-normal text-gray-700 font-normal">2022-09-02</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="relative flex-col bg-clip-border rounded-xl bg-transparent text-gray-700 shadow-none grid gap-2 item sm:grid-cols-2">
-            <div class="relative bg-clip-border rounded-xl overflow-hidden bg-white text-gray-700 shadow-lg m-0"><img src="https://bucket.material-tailwind.com/magic-ai/dc74a867f21afc734166a6d37c08beaba4ff040664ba8ccce918e054264ad68d.jpg" alt="Sustainable Practices for a Greener Future" class="object-cover w-full h-full" /></div>
-            <div class="p-6 px-2 sm:pr-6 sm:pl-4">
-              <p class="block antialiased font-sans text-sm font-light leading-normal text-inherit mb-4 !font-semibold">Sustainability</p><a href="#" class="block antialiased tracking-normal font-sans text-xl font-semibold leading-snug text-blue-gray-900 mb-2 normal-case transition-colors hover:text-gray-700">Sustainable Practices for a Greener Future</a>
-              <p class="block antialiased font-sans text-base leading-relaxed text-inherit mb-8 font-normal !text-gray-500">Find out how our investment in sustainable practices is driving us towards a greener future, showcasing our commitment to environmental responsibility.</p>
-              <div class="flex items-center gap-4"><img src="https://bucket.material-tailwind.com/magic-ai/2fadd7f00b6d08fc9dcacef52af357ec1213c0415ab97ace57ae0f17c7f6c2c8.jpg" class="inline-block relative object-cover object-center !rounded-full w-12 h-12 rounded-lg" />
-                <div>
-                  <p class="block antialiased font-sans text-base font-light leading-relaxed text-blue-gray-900 mb-0.5 !font-semibold">Alex Johnson</p>
-                  <p class="block antialiased font-sans text-sm leading-normal text-gray-700 font-normal">2022-09-20</p>
-                </div>
-              </div>
+            <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+              <button onclick="cancelAction()" type="button" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">Nom</button>
+              <button id="end-session-button-confirm" type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Oui</button>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </div>
+  </main>
 
-    <script src="/js/main.js" type="text/javascript"></script>
+  <script src="/js/main.js" type="text/javascript"></script>
+  <script>
+    var sessionId = '<%= sessionId %>';
+    const endSessionButton = document.getElementById('end-session-button-confirm')
+    console.log(sessionId)
+    function cancelAction(){
+        document.getElementById("modal-dialog").classList.add("hidden");
+    }
+    function onEndSessionBtnClicked(){
+        document.getElementById("modal-dialog").classList.remove("hidden");
+    }
+
+    async function endCurrentSession() {
+      try {
+        const url = `http://localhost:4000/api/sessions/${sessionId}`;
+        
+
+        const response = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+
+        console.log(response);
+
+        if (response.ok) {
+            const result = await response.json();
+            console.log('Success:', result);
+            window.location.href = '/'
+        } else {
+            console.error('Error:', response.status, response.statusText);
+        }
+      } catch (error) {
+        console.error('Network error:', error);
+      }
+    }
+
+    endSessionButton.addEventListener('click', async(e) => {
+      e.preventDefault();
+      await endCurrentSession();
+    });
+</script>
 </body>
 </html>
