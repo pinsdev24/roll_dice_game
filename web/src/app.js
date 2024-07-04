@@ -79,11 +79,13 @@ async function startServer() {
     //await initializeDatabase();
 
     // Démarrer le serveur
-    sequelize.sync().then(() => {
-      app.listen(PORT, () => {
-        console.log(`Server is running on port ${PORT}`);
+    if (process.env.NODE_ENV != 'test'){
+      sequelize.sync().then(() => {
+        app.listen(PORT, () => {
+          console.log(`Server is running on port ${PORT}`);
+        });
       });
-    });
+    }
   } catch (error) {
     console.error('Erreur lors du démarrage du serveur:', error);
     process.exit(1);

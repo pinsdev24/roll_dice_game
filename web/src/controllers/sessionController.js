@@ -32,7 +32,7 @@ exports.endSession = async (req, res) => {
     session.endTime = new Date();
     await session.save();
     req.session.sessionId = null
-    res.json({ message: 'Session ended', sessionId: session.id });
+    res.status(200).json({ message: 'Session ended'});
   } catch (error) {
     res.status(400).json({ message: 'Error ending session', error: error.message });
   }
