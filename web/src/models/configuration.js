@@ -15,11 +15,11 @@ module.exports = (sequelize) => {
     },
     diceCount: {
       type: DataTypes.INTEGER,
-      defaultValue: 2,
+      defaultValue: 1,
     },
     gameCount: {
       type: DataTypes.INTEGER,
-      defaultValue: 10,
+      defaultValue: 3,
     },
     waitTime: {
       type: DataTypes.INTEGER,
