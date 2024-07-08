@@ -2,7 +2,7 @@
 FROM node:latest
 
 # Définir le répertoire de travail dans le conteneur
-WORKDIR /app
+WORKDIR /app/web
 
 # Copier package.json et package-lock.json dans le répertoire de travail
 COPY package*.json ./
@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Exposer le port que l'application utilisera
-EXPOSE 3000
+EXPOSE 4000
 
 # Définir la commande pour démarrer l'application
 CMD ["npm", "start"]

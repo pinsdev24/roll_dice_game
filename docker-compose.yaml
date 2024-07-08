@@ -2,13 +2,13 @@ version: '3.8'
 
 services:
   app:
-    build: .
+    build: ./web
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=development
       - DB_USER=root
-      - DB_PASSWORD=password
+      - DB_PASSWORD=
       - DB_NAME=database_dev
       - DB_NAME_TEST=database_test
       - DB_HOST=db

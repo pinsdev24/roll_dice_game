@@ -1,4 +1,4 @@
-const { Session, Configuration } = require('../models');
+const { Session, Configuration, User } = require('../models');
 
 exports.startSession = async (req, res) => {
   try {
@@ -11,6 +11,9 @@ exports.startSession = async (req, res) => {
     });
 
     await Configuration.create({ SessionId: session.id });
+
+    const user = await User.findByPk(id);
+    await session.addPlayer(user);
 
     req.session.sessionId = session.id;
     res.status(201).json({ message: 'Session started', sessionId: session.id });

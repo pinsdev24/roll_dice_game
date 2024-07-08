@@ -48,10 +48,10 @@
           <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">GeekIT Game</span>
       </a>
       <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-          <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mr-3">
+          <a href="http://localhost:5000/configuration/<%= configuration.id %>?sessionId=<%= sessionId %>&creatorId=<%= user.id %>"  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mr-3">
             <i class="fa-solid fa-gear mr-2"></i>
             Configuration
-          </button>
+          </a>
           <button onclick="onEndSessionBtnClicked()" type="button" id="end-session-button" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
             <i class="fa-solid fa-arrow-right-from-bracket mr-2"></i>
             Quitter la session
@@ -73,7 +73,7 @@
       <!-- Colonne gauche: Informations du joueur courant -->
       <div class="col-span-3 bg-white rounded-lg shadow-lg p-6">
         <h2 class="text-2xl font-bold mb-4">Info Joueur</h2>
-        <p><strong>Nom :</strong> <span id="playerName" class="text-xl font-bold uppercase"><%= username %></span></p>
+        <p><strong>Nom :</strong> <span id="playerName" class="text-xl font-bold uppercase"><%= user.username %></span></p>
         <p><strong>Score Total :</strong> <span id="playerScore" class="font-bold">0</span></p>
         <p>
           <strong>Jeux joués :</strong>

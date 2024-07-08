@@ -58,14 +58,14 @@ app.get('/game', async (req, res) => {
   }
 
   const sessionId = req.session.sessionId;
-  const {username} = req.session.user;
+  const user = req.session.user;
 
   const configuration = await Configuration.findOne({where: {SessionId: sessionId}})
 
   if (configuration){
-    res.render('game', {sessionId, username, configuration})
+    res.render('game', {sessionId, user, configuration})
   } else {
-    res.render('game', {sessionId, username})
+    res.render('game', {sessionId, user})
   }
 });
 
