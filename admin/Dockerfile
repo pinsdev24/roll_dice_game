@@ -5,13 +5,13 @@ FROM python:3.9
 WORKDIR /app/admin
 
 # Copier le fichier requirements.txt dans le répertoire de travail
-COPY requirements.txt .
+COPY /admin/requirements.txt .
 
 # Installer les dépendances Python
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copier le contenu du répertoire actuel dans le répertoire de travail du conteneur
-COPY . .
+COPY /admin/ .
 
 # Exposer le port que l'application Flask utilise
 EXPOSE 5000

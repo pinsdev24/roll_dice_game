@@ -20,6 +20,7 @@ module.exports = (sequelize) => {
     },
   }, {
     sequelize,
+    tableName: 'users',
     modelName: 'User',
   });
 

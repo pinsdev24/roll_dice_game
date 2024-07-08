@@ -114,7 +114,7 @@ class ConfigurationResource(Resource):
             config = Configuration.query.get(id)
             if config is None:
                 return make_response(render_template('pages-error-404.html'))
-            return make_response(render_template('settings.html', data = config.serialize()))
+            return config.serialize(), 200
 
     def post(self, id=None):
         if request.form.get('_method') == 'PUT':
@@ -131,6 +131,6 @@ class ConfigurationResource(Resource):
             config.playerCount = data['player_count']
             config.updated_at = datetime.utcnow()
             db.session.commit()
-            return redirect('http://localhost:4000/game'), 200
+            return config.serialize(), 200
         else:
             make_response(render_template('pages-error-404.html')), 404

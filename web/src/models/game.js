@@ -23,6 +23,7 @@ module.exports = (sequelize) => {
   }, {
     sequelize,
     modelName: 'Game',
+    tableName: 'games',
     timestamps: false
   });
 

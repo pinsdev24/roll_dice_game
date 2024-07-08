@@ -28,6 +28,7 @@ module.exports = (sequelize) => {
   }, {
     sequelize,
     modelName: 'Configuration',
+    tableName: 'configurations'
   });
 
   return Configuration;

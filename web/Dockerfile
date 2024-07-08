@@ -5,16 +5,16 @@ FROM node:latest
 WORKDIR /app/web
 
 # Copier package.json et package-lock.json dans le répertoire de travail
-COPY package*.json ./
+COPY /web/package*.json ./
 
 # Installer les dépendances de l'application
 RUN npm install
 
 # Copier le reste de l'application dans le répertoire de travail
-COPY . .
+COPY /web/ .
 
 # Exposer le port que l'application utilisera
 EXPOSE 4000
 
 # Définir la commande pour démarrer l'application
-CMD ["npm", "start"]
+CMD ["npm", "run", "start"]

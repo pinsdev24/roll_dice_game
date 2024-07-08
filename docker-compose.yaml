@@ -1,17 +1,30 @@
 version: '3.8'
 
 services:
-  app:
-    build: ./web
+  web:
+    build:
+      context: .
+      dockerfile: ./web/Dockerfile
     ports:
-      - "3000:3000"
+      - "4000:4000"
     environment:
       - NODE_ENV=development
       - DB_USER=root
-      - DB_PASSWORD=
-      - DB_NAME=database_dev
-      - DB_NAME_TEST=database_test
+      - DB_PASSWORD=root
+      - DB_NAME=dice_game
+      - DB_NAME_TEST=dice_game_test
       - DB_HOST=db
+    depends_on:
+      - db
+  
+  admin:
+    build:
+      context: .
+      dockerfile: ./admin/Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - SQLALCHEMY_DATABASE_URI=mysql+pymysql://root:root@db/dice_game
     depends_on:
       - db
 
@@ -19,12 +32,24 @@ services:
     image: mysql:5.7
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: database_dev
-      MYSQL_DATABASE_TEST: database_test
+      MYSQL_DATABASE: dice_game
+      MYSQL_DATABASE_TEST: dice_game_test
+      MYSQL_PASSWORD: password
     ports:
       - "3306:3306"
     volumes:
       - db-data:/var/lib/mysql
+  
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
 
 volumes:
   db-data:
