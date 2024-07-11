@@ -16,7 +16,7 @@ jobs:
     services:
       db:
         image: mysql:5.7
-        environment:
+        env:
           MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: dice_game
           MYSQL_DATABASE_TEST: dice_game_test
