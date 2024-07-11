@@ -1,0 +1,64 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/*'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+       image: mysql:5.7
+       environment:
+         MYSQL_ROOT_PASSWORD: password
+         MYSQL_DATABASE: dice_game
+         MYSQL_DATABASE_TEST: dice_game_test
+         MYSQL_PASSWORD: password
+       ports:
+         - "3306:3306"
+       volumes:
+          - db-data:/var/lib/mysql
+
+    steps:
+     - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./web
+
+      - name: Run tests
+        run: npm test
+        working-directory: ./web
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r admin/requirements.txt
+        
+      - name: Run and build Docker image
+        run: docker-compose up --build
+
+      - name: Run admin tests
+        run: |
+          source venv/bin/activate
+          pytest
+        working-directory: ./admin
