@@ -15,19 +15,19 @@ jobs:
 
     services:
       db:
-       image: mysql:5.7
-       environment:
+        image: mysql:5.7
+        environment:
          MYSQL_ROOT_PASSWORD: password
          MYSQL_DATABASE: dice_game
          MYSQL_DATABASE_TEST: dice_game_test
          MYSQL_PASSWORD: password
-       ports:
+        ports:
          - "3306:3306"
-       volumes:
+        volumes:
           - db-data:/var/lib/mysql
 
     steps:
-     - name: Checkout code
+      - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Set up Node.js
