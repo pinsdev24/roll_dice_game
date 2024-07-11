@@ -17,12 +17,12 @@ jobs:
       db:
         image: mysql:5.7
         environment:
-         MYSQL_ROOT_PASSWORD: password
-         MYSQL_DATABASE: dice_game
-         MYSQL_DATABASE_TEST: dice_game_test
-         MYSQL_PASSWORD: password
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: dice_game
+          MYSQL_DATABASE_TEST: dice_game_test
+          MYSQL_PASSWORD: password
         ports:
-         - "3306:3306"
+          - "3306:3306"
         volumes:
           - db-data:/var/lib/mysql
 
