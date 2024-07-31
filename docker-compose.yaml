@@ -14,6 +14,7 @@ services:
       - DB_NAME=dice_game
       - DB_NAME_TEST=dice_game_test
       - DB_HOST=db
+      - PORT=4000
     depends_on:
       - db
   
@@ -24,7 +25,7 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - SQLALCHEMY_DATABASE_URI=mysql+pymysql://root:root@db/dice_game
+      - SQLALCHEMY_DATABASE_URI=mysql+pymysql://root:password@db/dice_game
     depends_on:
       - db
 

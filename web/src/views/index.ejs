@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GeekIT Dice Game</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body class="bg-gray-100 font-sans">
     <nav class="bg-blue-600 text-white p-4">
@@ -12,7 +13,11 @@
             <a href="/" class="text-2xl font-bold">GeekIT Dice Game</a>
             <div>
                 <a href="/" class="mr-4 hover:underline">Home</a>
-                <a href="/leaderboard" class="hover:underline">Leaderboard</a>
+                <a href="/leaderboard" class="hover:underline mr-2">Leaderboard</a>
+                <button onclick="logout()" type="button" id="end-session-button" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+                    <i class="fa-solid fa-right-from-bracket mr-2"></i>
+                    Se déconnecter
+                </button>
             </div>
         </div>
     </nav>
@@ -80,7 +85,6 @@
                     },
                 });
 
-                console.log('Response:', response);
                 if (response.ok) {
                     const result = await response.json();
                     window.location.replace('/game');
@@ -96,6 +100,27 @@
             e.preventDefault();
             await startSession();
         })
+
+        async function logout() {
+            try {
+                const url = 'http://localhost:4000/api/logout';
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                });
+
+                if (response.ok) {
+                    window.location.replace('/login');
+                } else {
+                    console.error('Error:', response.status, response.statusText);
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+            }
+        }
     </script>
 </body>
 </html>

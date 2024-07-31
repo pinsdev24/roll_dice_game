@@ -5,7 +5,7 @@ const path = require('path');
 const session = require('express-session');
 var bodyParser = require('body-parser')
 const routes = require('./routes');
-const { sequelize, Configuration } = require('./models');
+const { sequelize, Configuration, User, Session } = require('./models');
 const logger = require('./logger'); 
 
 const app = express();
@@ -62,10 +62,27 @@ app.get('/game', async (req, res) => {
 
   const configuration = await Configuration.findOne({where: {SessionId: sessionId}})
 
+  const session = await Session.findByPk(sessionId, {
+    include: [
+      {
+        model: User,
+        as: 'players',
+        through: {
+          attributes: [] // exclude attributes from the join table if not needed
+        }
+      }
+    ]
+  });
+
+  const players = session.players.map(player => player.dataValues);
+
+  // Convert players to JSON string
+  const playersJson = JSON.stringify(players);
+
   if (configuration){
-    res.render('game', {sessionId, user, configuration})
+    res.render('game', {sessionId, user, configuration, players: playersJson})
   } else {
-    res.render('game', {sessionId, user})
+    res.render('game', {sessionId, user, players: playersJson})
   }
 });
 
@@ -75,9 +92,6 @@ const PORT = process.env.PORT || 3000;
 
 async function startServer() {
   try {
-    // Initialiser la base de données
-    //await initializeDatabase();
-
     // Démarrer le serveur
     if (process.env.NODE_ENV != 'test'){
       sequelize.sync().then(() => {

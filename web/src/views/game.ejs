@@ -71,37 +71,34 @@
 
     <div class="grid grid-cols-12 gaps-4 mt-10">
       <!-- Colonne gauche: Informations du joueur courant -->
+
       <div class="col-span-3 bg-white rounded-lg shadow-lg p-6">
-        <h2 class="text-2xl font-bold mb-4">Info Joueur</h2>
-        <p><strong>Nom :</strong> <span id="playerName" class="font-bold uppercase"><%= user.username %></span></p>
-        <p><strong>Score Total :</strong> <span id="playerScore" class="font-bold">0</span></p>
-        <p>
-          <strong>Jeux joués :</strong>
-          <span id="gamesPlayed" class="font-bold">0</span>
-          <%if (configuration.gameCount > 0) { %>
-            /<%= configuration.gameCount %>
-          <% } %>
-        </p>
+        <h2 class="text-2xl font-bold mb-4">Joueurs</h2>
+        <div id="playerList">
+          <!-- Les joueurs seront ajoutés ici dynamiquement -->
+        </div>
       </div>
 
       <!-- Colonne centrale: Jeu de lancé de dé -->
       <div class="col-span-9">
         <div class="max-w-2xl mx-auto">
           <div class="bg-white rounded-lg shadow-lg p-8">
+            <h3 class="text-xl font-bold mb-4">Tour du joueur: <span id="currentPlayerName"></span></h3>
             <div class="flex justify-center mb-8">
-                <% for(let i = 0; i < configuration.diceCount; i++) { %>
-                    <img src="/images/dice-1.png" alt="Dice" class="dice mx-2" id="dice<%= i %>">
-                <% } %>
+              <% for(let i = 0; i < configuration.diceCount; i++) { %>
+                <img src="/images/dice-1.png" alt="Dice" class="dice mx-2" id="dice<%= i %>">
+              <% } %>
             </div>
             <div class="text-center">
-                <button id="rollButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300">
-                  Lancer les dés
-                </button>
+              <button id="rollButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300">
+                Lancer les dés
+              </button>
             </div>
             <div id="result" class="mt-8 text-center text-2xl font-bold"></div>
           </div>
         </div>
       </div>
+    </div>
     </div>
 
     <div id="modal-dialog" class="relative z-10 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
@@ -146,21 +143,16 @@
           <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
             <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
               <div class="sm:flex sm:items-start">
-                <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                  <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                  </svg>
-                </div>
                 <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                  <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Limite atteinte</h3>
+                  <h1 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Fin du Jeu!</h1>
                   <div class="mt-2">
-                    <p class="text-sm text-gray-500">Vous avez atteint le nombre de parties configurer pour cette session. Souhaitez-vous démmarer une nouvelle session maintenant?</p>
+                    <h2 class="text-sm text-gray-500" id="final-result"></h2>
                   </div>
                 </div>
               </div>
             </div>
             <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-              <button onclick="closeLimitGamePopup()" type="button" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">Nom</button>
+              <button onclick="closeLimitGamePopup()" type="button" class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto">Nom</button>
               <button onclick="onStartNewSessionButtonClicked()" id="start-new-session-button" type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Oui</button>
             </div>
           </div>
@@ -173,25 +165,34 @@
     var sessionId = '<%= sessionId %>';
     var numDice = '<%= configuration.diceCount %>';
     var numGame = '<%= configuration.gameCount %>';
+    let players = JSON.parse('<%- players %>');
+    var currentPlayerIndex = 0;
+
 
     const endSessionButton = document.getElementById('end-session-button-confirm')
     const startNewSessionButton = document.getElementById('start-new-session-button');
     const rollButton = document.getElementById('rollButton');
     const result = document.getElementById('result');
+    const endGamePopupContent = document.getElementById('final-result');
     const playerScore = document.getElementById('playerScore')
     const gamesPlayed = document.getElementById('gamesPlayed')
+
+    const playerList = document.getElementById('playerList');
+    const currentPlayerName = document.getElementById('currentPlayerName');
 
     let dice = []
 
     for (let i = 0; i<numDice ; i++){
       dice.push(document.getElementById(`dice${i}`))
     }
+
+
     
     if (rollButton) {
       rollButton.addEventListener('click', () => {
-        console.log(gamesPlayed.textContent, numGame)
-
-        if ((numGame > 0 && +gamesPlayed.textContent < numGame) || numGame == 0){
+        const currentPlayer = players[currentPlayerIndex];
+        
+        if ((numGame > 0 && currentPlayer.gamesPlayed < numGame) || numGame == 0) {
           rollButton.disabled = true;
           let rolls = [];
 
@@ -205,19 +206,31 @@
 
               if (index === dice.length - 1) {
                 const total = rolls.reduce((sum, num) => sum + num, 0);
-                result.textContent = `Vous avez obtenu un total de ${total}!`;
-                playerScore.textContent = +playerScore.textContent + total
-                gamesPlayed.textContent = +gamesPlayed.textContent + 1
-                saveGame({score: total})
+                result.textContent = `${currentPlayer.username} a obtenu un total de ${total}!`;
+                currentPlayer.score += total;
+                currentPlayer.gamesPlayed += 1;
+                saveGame({ playerId: currentPlayer.id, score: total });
+                updatePlayerList();
                 rollButton.disabled = false;
+                
+                setTimeout(() => {
+                  nextPlayer();
+                  if (players.every(player => player.gamesPlayed >= numGame)) {
+                    endGame();
+                  }
+                }, 1000);
               }
-            }, 1000 * (index + 1));
+            }, 500 * (index + 1));
           });
         }
-        if (numGame > 0 && +gamesPlayed.textContent >= numGame){
-          document.getElementById('popup-limit-dialog').classList.remove('hidden')
-        }
       });
+    }
+
+    function endGame() {
+      const winner = players.reduce((prev, current) => (prev.score > current.score) ? prev : current);
+      endGamePopupContent.innerText = `Fin du jeu! Le gagnant est ${winner.username} avec un score de ${winner.score}!\n\nSouhaitez-vous démmarer une nouvelle session maintenant?`;
+      rollButton.disabled = true;
+      document.getElementById('popup-limit-dialog').classList.remove('hidden');
     }
 
     function cancelAction(){
@@ -333,6 +346,42 @@
         console.error('Network error:', error);
       }
     }
+
+    function updatePlayerList() {
+      playerList.innerHTML = '';
+      
+      players.forEach((player, index) => {
+        const playerDiv = document.createElement('div');
+        playerDiv.className = `p-2 mb-2 rounded ${index === currentPlayerIndex ? 'active-player' : ''}`;
+        playerDiv.innerHTML = `
+          <p><strong>Nom :</strong> <span class="font-bold uppercase">${player.username}</span></p>
+          <p><strong>Score Total :</strong> <span class="font-bold">${player.score}</span></p>
+          <p><strong>Jeux joués :</strong> <span class="font-bold">${player.gamesPlayed}</span>
+            ${numGame > 0 ? `/${numGame}` : ''}
+          </p>
+        `;
+        playerList.appendChild(playerDiv);
+      });
+      currentPlayerName.textContent = players[currentPlayerIndex].username;
+    }
+
+    function nextPlayer() {
+      currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+      updatePlayerList();
+    }
+
+    function onGameStart() {
+      players = players.map(player => {
+        player.gamesPlayed = 0;
+        player.score = 0;
+        return player;
+      });
+    }
+    
+    onGameStart();
+    updatePlayerList();
+
+    console.log(players)
 </script>
 </body>
 </html>
