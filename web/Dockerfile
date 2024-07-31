@@ -10,6 +10,8 @@ COPY /web/package*.json ./
 # Installer les dépendances de l'application
 RUN npm install
 
+RUN npm install sequelize sequelize-cli cross-env --save-dev
+
 # Copier le reste de l'application dans le répertoire de travail
 COPY /web/ .
 
