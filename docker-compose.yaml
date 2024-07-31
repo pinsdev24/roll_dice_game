@@ -36,7 +36,7 @@ services:
       MYSQL_DATABASE_TEST: dice_game_test
       MYSQL_PASSWORD: password
     ports:
-      - "3307:3306"
+      - "3306:3306"
     volumes:
       - db-data:/var/lib/mysql
   
@@ -47,7 +47,7 @@ services:
       PMA_PORT: 3306
       MYSQL_ROOT_PASSWORD: password
     ports:
-      - "8081:80"
+      - "8080:80"
     depends_on:
       - db
 
