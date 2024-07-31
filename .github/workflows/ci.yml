@@ -39,6 +39,10 @@ jobs:
         run: npm install
         working-directory: ./web
 
+      - name: Install Sequelize CLI
+        run: npm install sequelize sequelize-cli cross-env --save-dev
+        working-directory: ./web
+
       - name: Run tests
         run: npm test
         working-directory: ./web
